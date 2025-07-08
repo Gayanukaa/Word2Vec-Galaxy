@@ -47,7 +47,7 @@ def create_3d_plot(analyzer, target_word, similar_words):
             ),
             text=words,
             textposition="top center",
-            textfont=dict(size=10, color='black'),
+            textfont=dict(size=10, color='white'),
             hovertemplate='<b>%{text}</b><br>' +
                          'Similarity: %{marker.color:.3f}<br>' +
                          'X: %{x:.2f}<br>' +
@@ -120,7 +120,7 @@ def create_analogy_visualization(analyzer, word1, word2, word3, result):
             ),
             text=words,
             textposition="top center",
-            textfont=dict(size=12, color='black'),
+            textfont=dict(size=12, color='white'),
             hovertemplate='<b>%{text}</b><br>' +
                          'Type: %{customdata}<br>' +
                          'X: %{x:.2f}<br>' +

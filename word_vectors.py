@@ -118,17 +118,36 @@ class WordVectorAnalyzer:
     def word_analogy(self, word1, word2, word3):
         """
         Compute: word3 - word1 + word2
-        Example: biggest - big + small = smallest
+        Example: king - man + woman = queen
         """
         try:
-            # Vector arithmetic: X = vector(word3) - vector(word1) + vector(word2)
-            result_vector = (self.model[word3] - self.model[word1] + self.model[word2])
+            # Check if all words exist in vocabulary
+            missing_words = []
+            for word in [word1, word2, word3]:
+                if word not in self.vocab:
+                    missing_words.append(word)
 
-            # Find most similar word to result vector
-            similar_words = self.model.similar_by_vector(result_vector, topn=5)
-            return similar_words[0][0]  # Return the most similar word
-        except KeyError as e:
-            return f"Word not found: {e}"
+            if missing_words:
+                return f"Word not found: {', '.join(missing_words)}"
+
+            # Vector arithmetic: result = word3 - word1 + word2
+            result_vector = self.model[word3] - self.model[word1] + self.model[word2]
+
+            # Find most similar words, excluding the input words
+            similar_words = self.model.similar_by_vector(result_vector, topn=10)
+
+            # Filter out the input words to avoid returning them as results
+            input_words = {word1.lower(), word2.lower(), word3.lower()}
+
+            for word, similarity in similar_words:
+                if word.lower() not in input_words:
+                    return word
+
+            # If all top results are input words, return the first one anyway
+            return similar_words[0][0]
+
+        except Exception as e:
+            return f"Error in analogy calculation: {str(e)}"
 
     def find_similar_words(self, word, num_words=20):
         """Find similar words using cosine similarity"""

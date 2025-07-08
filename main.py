@@ -38,19 +38,22 @@ def main():
 
     # Vector arithmetic section
     st.sidebar.header("🧮 Vector Arithmetic")
-    word1 = st.sidebar.text_input("Word 1 (subtract):", "big")
-    word2 = st.sidebar.text_input("Word 2 (add):", "small")
-    word3 = st.sidebar.text_input("Word 3 (base):", "biggest")
+    st.sidebar.markdown("*Format: word3 - word1 + word2 = result*")
+    word1 = st.sidebar.text_input("Word 1 (subtract):", "man")
+    word2 = st.sidebar.text_input("Word 2 (add):", "woman")
+    word3 = st.sidebar.text_input("Word 3 (base):", "king")
 
     if st.sidebar.button("🔢 Calculate Analogy"):
         if word1 and word2 and word3:
             with st.spinner("Calculating vector analogy..."):
                 result = analyzer.word_analogy(word1, word2, word3)
-                if not result.startswith("Word not found"):
-                    st.sidebar.success(f"**Result:** {result}")
+                if not result.startswith("Word not found") and not result.startswith("Error"):
+                    st.sidebar.success(f"**{word3} - {word1} + {word2} = {result}**")
                     # Create analogy visualization
-                    st.session_state.current_fig = create_analogy_visualization(analyzer, word1, word2, word3, result)
-                    st.session_state.current_visualization = "analogy"
+                    fig = create_analogy_visualization(analyzer, word1, word2, word3, result)
+                    if fig is not None:
+                        st.session_state.current_fig = fig
+                        st.session_state.current_visualization = "analogy"
                 else:
                     st.sidebar.error(result)
         else:
@@ -64,7 +67,13 @@ def main():
         st.markdown("""
         ### How to use:
         1. **Similar Words**: Enter a word and click 'Visualize Similar Words' to see semantically similar words in 3D space
-        2. **Vector Arithmetic**: Enter three words and click 'Calculate Analogy' to see vector arithmetic results (e.g., king - man + woman = queen)
+        2. **Vector Arithmetic**: Enter three words and click 'Calculate Analogy' to see vector arithmetic results
+
+        ### Example analogies:
+        - king - man + woman = queen
+        - paris - france + italy = rome
+        - walking - walk + run = running
+        - bigger - big + small = smaller
         """)
 
 if __name__ == "__main__":
