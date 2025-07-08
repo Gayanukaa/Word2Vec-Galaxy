@@ -7,6 +7,11 @@ def main():
     st.title("Word Vector 3D Visualization")
 
     # Initialize analyzer with loading state
+    if 'analyzer' not in st.session_state:
+        with st.spinner("Initializing Word Vector Analyzer..."):
+            st.session_state.analyzer = WordVectorAnalyzer()
+
+    analyzer = st.session_state.analyzer
 
     # Sidebar controls
     st.sidebar.header("Controls")

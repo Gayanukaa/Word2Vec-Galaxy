@@ -14,6 +14,100 @@ class WordVectorAnalyzer:
         self.model = self._load_model_with_progress(model_name)
         self.vocab = set(self.model.key_to_index.keys())
 
+    def _load_model_with_progress(self, model_name):
+        """Load model with progress bar"""
+        # Check if model is already downloaded
+        model_path = Path(api.base_dir) / model_name
+
+        if not os.path.exists(model_path):
+            # Model needs to be downloaded
+            st.info(f"🔄 Downloading {model_name} model... This may take a few minutes.")
+            st.write("📊 Model size: ~1.5GB")
+
+            # Create progress bar and status
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+
+            # Show animated progress while downloading
+            status_text.text("🌐 Connecting to download server...")
+
+            # Since gensim doesn't provide progress callbacks, we'll simulate progress
+            # based on typical download time
+            import threading
+            import time
+
+            download_complete = False
+
+            def download_model():
+                nonlocal download_complete
+                try:
+                    model = api.load(model_name)
+                    download_complete = True
+                    return model
+                except Exception as e:
+                    st.error(f"Error downloading model: {e}")
+                    download_complete = True
+                    return None
+
+            # Start download in a separate thread
+            model_result = [None]
+
+            def download_thread():
+                model_result[0] = download_model()
+
+            thread = threading.Thread(target=download_thread)
+            thread.start()
+
+            # Show progress animation
+            progress = 0
+            messages = [
+                "📡 Downloading model files...",
+                "🔄 Processing word vectors...",
+                "📦 Extracting model data...",
+                "⚡ Optimizing for fast access...",
+                "✅ Finalizing setup..."
+            ]
+
+            message_index = 0
+            while not download_complete:
+                # Update progress bar
+                progress = min(progress + 1, 95)  # Don't go to 100% until actually done
+                progress_bar.progress(progress)
+
+                # Update status message
+                if progress % 20 == 0 and message_index < len(messages) - 1:
+                    message_index += 1
+
+                status_text.text(messages[message_index])
+                time.sleep(0.1)
+
+            # Wait for thread to complete
+            thread.join()
+
+            # Complete the progress bar
+            progress_bar.progress(100)
+            status_text.text("✅ Download complete!")
+
+            # Clear the progress indicators after a short delay
+            time.sleep(1)
+            progress_bar.empty()
+            status_text.empty()
+
+            if model_result[0] is not None:
+                st.success("🎉 Model loaded successfully!")
+                return model_result[0]
+            else:
+                st.error("❌ Failed to load model")
+                return None
+
+        else:
+            # Model is already downloaded, just load it
+            st.info("📂 Loading cached model...")
+            with st.spinner("Loading model from cache..."):
+                model = api.load(model_name)
+            st.success("✅ Cached model loaded successfully!")
+
+        return model
 
     def get_vector(self, word):
         """Get vector for a word"""
