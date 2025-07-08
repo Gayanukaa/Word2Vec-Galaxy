@@ -135,8 +135,12 @@ class WordVectorAnalyzer:
         if word not in self.vocab:
             return []
 
-        similar_words = self.model.most_similar(word, topn=num_words)
-        return [word] + [w[0] for w in similar_words]
+        try:
+            similar_words = self.model.most_similar(word, topn=num_words)
+            return [word] + [w[0] for w in similar_words]
+        except Exception as e:
+            st.error(f"Error finding similar words: {e}")
+            return []
 
     def reduce_dimensions(self, words, method='pca', n_components=3):
         """Reduce word vectors to 3D for visualization"""
