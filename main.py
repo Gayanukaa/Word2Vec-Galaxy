@@ -59,22 +59,23 @@ def main():
         else:
             st.sidebar.warning("Please enter all three words for analogy calculation.")
 
+    # Display helping text
+    st.info("👆 Use the sidebar controls to generate visualizations")
+    st.markdown("""
+    ### How to use:
+    1. **Similar Words**: Enter a word and click 'Visualize Similar Words' to see semantically similar words in 3D space
+    2. **Vector Arithmetic**: Enter three words and click 'Calculate Analogy' to see vector arithmetic results
+
+    ### Example analogies:
+    - king - man + woman = queen
+    - paris - france + italy = rome
+    - walking - walk + run = running
+    - bigger - big + small = smaller
+    """)
+
     # Display current visualization
     if st.session_state.current_fig is not None:
         st.plotly_chart(st.session_state.current_fig, use_container_width=True)
-    else:
-        st.info("👆 Use the sidebar controls to generate visualizations")
-        st.markdown("""
-        ### How to use:
-        1. **Similar Words**: Enter a word and click 'Visualize Similar Words' to see semantically similar words in 3D space
-        2. **Vector Arithmetic**: Enter three words and click 'Calculate Analogy' to see vector arithmetic results
-
-        ### Example analogies:
-        - king - man + woman = queen
-        - paris - france + italy = rome
-        - walking - walk + run = running
-        - bigger - big + small = smaller
-        """)
 
 if __name__ == "__main__":
     main()
