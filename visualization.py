@@ -152,7 +152,7 @@ def create_analogy_visualization(analyzer, word1, word2, word3, result):
         word3_idx = words.index(word3)
         result_idx = words.index(result)
 
-        # Vector from origin to word1 (subtract) - Red dotted line
+        # Vector from origin to word1 (subtract) - Red slightly dotted line
         fig.add_trace(go.Scatter3d(
             x=[0, vectors_3d[word1_idx, 0]],
             y=[0, vectors_3d[word1_idx, 1]],
@@ -163,7 +163,7 @@ def create_analogy_visualization(analyzer, word1, word2, word3, result):
             showlegend=True
         ))
 
-        # Vector from origin to word2 (add) - Blue dotted line
+        # Vector from origin to word2 (add) - Blue slightly dotted line
         fig.add_trace(go.Scatter3d(
             x=[0, vectors_3d[word2_idx, 0]],
             y=[0, vectors_3d[word2_idx, 1]],
@@ -174,7 +174,7 @@ def create_analogy_visualization(analyzer, word1, word2, word3, result):
             showlegend=True
         ))
 
-        # Vector from origin to word3 (base) - Green dotted line
+        # Vector from origin to word3 (base) - Green slightly dotted line
         fig.add_trace(go.Scatter3d(
             x=[0, vectors_3d[word3_idx, 0]],
             y=[0, vectors_3d[word3_idx, 1]],
@@ -193,6 +193,58 @@ def create_analogy_visualization(analyzer, word1, word2, word3, result):
             mode='lines',
             line=dict(color='purple', width=5),
             name=f'{result} (result)',
+            showlegend=True
+        ))
+
+        # Now add the vector arithmetic operation lines
+        # Step 1: word3 - word1 (subtraction vector)
+        # This shows the vector from word1 to word3 (which represents word3 - word1)
+        fig.add_trace(go.Scatter3d(
+            x=[vectors_3d[word1_idx, 0], vectors_3d[word3_idx, 0]],
+            y=[vectors_3d[word1_idx, 1], vectors_3d[word3_idx, 1]],
+            z=[vectors_3d[word1_idx, 2], vectors_3d[word3_idx, 2]],
+            mode='lines',
+            line=dict(color='orange', width=4, dash='longdash'),
+            name=f'{word3} - {word1}',
+            showlegend=True
+        ))
+
+        # Step 2: Calculate intermediate result position (word3 - word1)
+        intermediate_vector = vectors_3d[word3_idx] - vectors_3d[word1_idx]
+
+        # Step 3: Add word2 vector to the intermediate result
+        # This shows the vector from intermediate result to final result
+        # The intermediate result position would be at the end of (word3 - word1) vector
+        fig.add_trace(go.Scatter3d(
+            x=[intermediate_vector[0], vectors_3d[result_idx, 0]],
+            y=[intermediate_vector[1], vectors_3d[result_idx, 1]],
+            z=[intermediate_vector[2], vectors_3d[result_idx, 2]],
+            mode='lines',
+            line=dict(color='cyan', width=4, dash='longdash'),
+            name=f'+ {word2}',
+            showlegend=True
+        ))
+
+        # Step 4: Show the intermediate result point
+        fig.add_trace(go.Scatter3d(
+            x=[intermediate_vector[0]],
+            y=[intermediate_vector[1]],
+            z=[intermediate_vector[2]],
+            mode='markers',
+            marker=dict(size=12, color='yellow', symbol='diamond'),
+            name=f'Intermediate ({word3}-{word1})',
+            showlegend=True
+        ))
+
+        # Step 5: Show the connection from word2 to the intermediate result
+        # This visualizes how word2 is being added to (word3 - word1)
+        fig.add_trace(go.Scatter3d(
+            x=[vectors_3d[word2_idx, 0], intermediate_vector[0]],
+            y=[vectors_3d[word2_idx, 1], intermediate_vector[1]],
+            z=[vectors_3d[word2_idx, 2], intermediate_vector[2]],
+            mode='lines',
+            line=dict(color='magenta', width=3, dash='longdashdot'),
+            name=f'{word2} → intermediate',
             showlegend=True
         ))
 
