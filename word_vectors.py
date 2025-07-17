@@ -119,6 +119,9 @@ class WordVectorAnalyzer:
         """
         Compute: word3 - word1 + word2
         Example: king - man + woman = queen
+
+        Note: Excludes input words from results to avoid the common issue where
+        Word2Vec returns one of the input words due to high similarity in embedding space.
         """
         try:
             # Check if all words exist in vocabulary
@@ -134,17 +137,25 @@ class WordVectorAnalyzer:
             result_vector = self.model[word3] - self.model[word1] + self.model[word2]
 
             # Find most similar words, excluding the input words
-            similar_words = self.model.similar_by_vector(result_vector, topn=10)
+            # Use a larger topn to ensure we find non-input words
+            similar_words = self.model.similar_by_vector(result_vector, topn=20)
 
-            # Filter out the input words to avoid returning them as results
-            input_words = {word1.lower(), word2.lower(), word3.lower()}
+            # Create comprehensive set of input words to exclude (case-insensitive)
+            input_words_lower = {word1.lower(), word2.lower(), word3.lower()}
+            input_words_exact = {word1, word2, word3}
 
+            # Filter out the input words and their variations
             for word, similarity in similar_words:
-                if word.lower() not in input_words:
+                if (word.lower() not in input_words_lower and
+                    word not in input_words_exact):
                     return word
 
-            # If all top results are input words, return the first one anyway
-            return similar_words[0][0]
+            # If somehow all results are input words (very rare), return the best match
+            # with a warning message
+            if similar_words:
+                return f"{similar_words[0][0]} (Warning: May be input word)"
+            else:
+                return "No similar words found"
 
         except Exception as e:
             return f"Error in analogy calculation: {str(e)}"

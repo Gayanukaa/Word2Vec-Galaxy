@@ -94,6 +94,8 @@ The app will open in your browser (usually at `http://localhost:8501`).
 
 ### Example Analogies
 
+![Example analogy visualization](ref.jpeg)
+
 - `king - man + woman = queen`
 - `walking - walk + run = running`
 
@@ -112,9 +114,25 @@ The app will open in your browser (usually at `http://localhost:8501`).
 - Preserves maximum variance while enabling visualization
 - Real-time computation for interactive exploration
 
+### Known Limitations & Solutions
+
+**Input Word Echo Problem**: Word2Vec analogies sometimes return input words instead of true analogical matches. This occurs because:
+
+- Input words have high similarity to the computed result vector
+- The model may prefer familiar words over novel analogical relationships
+- Example: `king - man + woman` might return "king" instead of "queen"
+
+**Our Solution**: The application automatically filters out all input words from analogy results, forcing the model to find genuine analogical relationships rather than echoing familiar terms.
+
 ### Vector Arithmetic
 
 The application performs the mathematical operation: `result = word3 - word1 + word2`
+
+**Important Note**: The application automatically excludes input words from the analogy results to avoid a common Word2Vec limitation where the model returns one of the input words instead of the true analogical match. This happens because:
+
+- Input words contribute heavily to the final vector expression
+- Similar words are already close in embedding space (e.g., "king" and "queen")
+- Cosine similarity might prefer an input word over the true analogy by a small margin
 
 Visualization shows:
 
