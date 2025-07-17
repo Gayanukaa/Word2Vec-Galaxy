@@ -68,9 +68,7 @@ def main():
 
     ### Example analogies:
     - king - man + woman = queen
-    - paris - france + italy = rome
     - walking - walk + run = running
-    - bigger - big + small = smaller
     """)
 
     # Display current visualization

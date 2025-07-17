@@ -89,15 +89,13 @@ The app will open in your browser (usually at `http://localhost:8501`).
 2. Click "🔢 Calculate Analogy"
 3. View the result (e.g., "queen") and explore the vector visualization showing:
    - Dotted lines from origin to input words
-   - Solid line to the result
-   - Vector operation connections between words
+   - Solid line from origin to result
+   - Direct connection line from base word to result
 
 ### Example Analogies
 
 - `king - man + woman = queen`
-- `paris - france + italy = rome`
 - `walking - walk + run = running`
-- `bigger - big + small = smaller`
 
 ## 🧪 Technical Details
 
@@ -121,9 +119,8 @@ The application performs the mathematical operation: `result = word3 - word1 + w
 Visualization shows:
 
 1. **Origin vectors** (dotted lines) - from origin to each input word
-2. **Operation vectors** (dashed lines) - showing subtraction and addition steps
-3. **Result vector** (solid line) - final computed result
-4. **Intermediate points** - showing calculation steps
+2. **Result vector** (solid line) - from origin to final computed result
+3. **Transformation vector** (dashed line) - direct connection from base word to result
 
 ## 🐛 Troubleshooting
 
