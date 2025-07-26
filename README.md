@@ -1,6 +1,6 @@
 # Word2Vec-Galaxy
 
-An interactive 3D visualization tool for exploring high-dimensional word vectors and performing vector arithmetic operations. Built with Streamlit and Plotly, this application transforms complex word embeddings into intuitive 3D visualizations, making semantic relationships and vector operations visually comprehensible.
+An interactive 3D visualization tool for high-dimensional word vectors and performing vector arithmetic operations. 
 
 ## References
 
@@ -125,13 +125,6 @@ The app will open in your browser (usually at `http://localhost:8501`).
 - **Path issues**: Ensure you're running from the project root directory
 - **Conda environment**: Activate the correct environment before running
 
-## Contributing
-
-Contributions are welcome! Areas for improvement:
-
-- Enhanced visualization features (clustering, word clouds)
-- Performance optimizations for larger vocabularies
-
 ## License
 
-This project is licensed under the GNU GENERAL PUBLIC License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/), allowing for open-source collaboration and modification.
