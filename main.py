@@ -1,19 +1,22 @@
 import streamlit as st
-from word_vectors import WordVectorAnalyzer
+
 from visualization import create_3d_plot, create_analogy_visualization
+from word_vectors import WordVectorAnalyzer
+
 
 def main():
     """Main Streamlit application"""
     st.title("Word Vector 3D Visualization")
 
     # Load model once and store in session state
-    if 'analyzer' not in st.session_state:
+    if "analyzer" not in st.session_state:
         st.session_state.analyzer = WordVectorAnalyzer()
 
     analyzer = st.session_state.analyzer
 
     st.info("👆 Use the sidebar controls to generate visualizations")
-    st.markdown("""
+    st.markdown(
+        """
     ### How to use:
     1. **Similar Words**: Enter a word and click 'Visualize Similar Words' to see semantically similar words in 3D space
     2. **Vector Arithmetic**: Enter three words and click 'Calculate Analogy' to see vector arithmetic results
@@ -21,7 +24,8 @@ def main():
     ### Example analogies:
     - king - man + woman = queen
     - walking - walk + run = running
-    """)
+    """
+    )
 
     # Sidebar controls for similar words
     st.sidebar.header("📊 Similar Words")

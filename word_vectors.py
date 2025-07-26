@@ -1,15 +1,17 @@
-import gensim.downloader as api
-import numpy as np
-from sklearn.decomposition import PCA
-import streamlit as st
 import os
 import time
 from pathlib import Path
 
+import gensim.downloader as api
+import numpy as np
+import streamlit as st
+from sklearn.decomposition import PCA
+
+
 class WordVectorAnalyzer:
     """Handles Word2Vec model loading and word vector operations"""
 
-    def __init__(self, model_name='word2vec-google-news-300'):
+    def __init__(self, model_name="word2vec-google-news-300"):
         """Load Word2Vec model and prepare vocabulary"""
         self.model = self._load_model_with_progress(model_name)
         self.vocab = set(self.model.key_to_index.keys())
