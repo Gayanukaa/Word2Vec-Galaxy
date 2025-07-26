@@ -4,16 +4,15 @@ import numpy as np
 import streamlit as st
 
 def create_3d_plot(analyzer, target_word, similar_words):
-    """Create interactive 3D plot of word vectors"""
+    """Create 3D scatter plot of similar words"""
     if not similar_words:
         st.error(f"No similar words found for '{target_word}'")
         return None
 
-    # Get reduced dimensions
-    words, vectors_3d = analyzer.reduce_dimensions(similar_words, method='pca')
+    words, vectors_3d = analyzer.reduce_dimensions(similar_words)
 
     if len(words) == 0:
-        st.error(f"No valid words found in vocabulary")
+        st.error("No valid words found")
         return None
 
     # Create colors based on similarity to target word
@@ -72,38 +71,40 @@ def create_3d_plot(analyzer, target_word, similar_words):
     return fig
 
 def create_analogy_visualization(analyzer, word1, word2, word3, result):
-    """Visualize word analogy in 3D space"""
+    """Create 3D visualization of word analogy"""
     words = [word1, word2, word3, result]
-
-    # Filter out any words not in vocabulary
     valid_words = [word for word in words if word in analyzer.vocab]
 
     if len(valid_words) < 4:
-        # If some words are missing, show an error message
-        missing_words = [word for word in words if word not in analyzer.vocab]
-        st.error(f"Words not found in vocabulary: {', '.join(missing_words)}")
+        missing = [word for word in words if word not in analyzer.vocab]
+        st.error(f"Words not found: {', '.join(missing)}")
         return None
 
-    # Get reduced dimensions
-    words, vectors_3d = analyzer.reduce_dimensions(valid_words, method='pca')
+    words, vectors_3d = analyzer.reduce_dimensions(valid_words)
 
-    # Create colors and labels for different word types
+    # Set up word properties
+    word_colors = {"red": word1, "blue": word2, "green": word3, "purple": result}
     colors = []
     labels = []
     sizes = []
 
-    word_info = {
-        word1: {"color": "red", "label": f"{word1} (subtract)", "size": 12},
-        word2: {"color": "blue", "label": f"{word2} (add)", "size": 12},
-        word3: {"color": "green", "label": f"{word3} (base)", "size": 12},
-        result: {"color": "purple", "label": f"{result} (result)", "size": 15}
-    }
-
     for word in words:
-        info = word_info[word]
-        colors.append(info["color"])
-        labels.append(info["label"])
-        sizes.append(info["size"])
+        if word == word1:
+            colors.append("red")
+            labels.append(f"{word} (subtract)")
+            sizes.append(12)
+        elif word == word2:
+            colors.append("blue")
+            labels.append(f"{word} (add)")
+            sizes.append(12)
+        elif word == word3:
+            colors.append("green")
+            labels.append(f"{word} (base)")
+            sizes.append(12)
+        else:  # result
+            colors.append("purple")
+            labels.append(f"{word} (result)")
+            sizes.append(15)
 
     # Create 3D scatter plot with origin at (0,0,0)
     fig = go.Figure()

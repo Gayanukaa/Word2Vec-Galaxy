@@ -1,65 +1,17 @@
 import streamlit as st
-import plotly.graph_objects as go
 from word_vectors import WordVectorAnalyzer
 from visualization import create_3d_plot, create_analogy_visualization
 
 def main():
+    """Main Streamlit application"""
     st.title("Word Vector 3D Visualization")
 
-    # Initialize analyzer with loading state
+    # Load model once and store in session state
     if 'analyzer' not in st.session_state:
-        with st.spinner("Initializing Word Vector Analyzer..."):
-            st.session_state.analyzer = WordVectorAnalyzer()
+        st.session_state.analyzer = WordVectorAnalyzer()
 
     analyzer = st.session_state.analyzer
 
-    # Initialize session state for visualization control
-    if 'current_visualization' not in st.session_state:
-        st.session_state.current_visualization = None
-    if 'current_fig' not in st.session_state:
-        st.session_state.current_fig = None
-
-    # Sidebar controls
-    st.sidebar.header("📊 Similar Words Visualization")
-    word_input = st.sidebar.text_input("Enter a word:", "pet")
-    num_similar = st.sidebar.slider("Number of similar words:", 5, 50, 20)
-
-    if st.sidebar.button("🔍 Visualize Similar Words"):
-        if word_input:
-            with st.spinner("Generating similar words visualization..."):
-                similar_words = analyzer.find_similar_words(word_input, num_similar)
-                if similar_words:
-                    st.session_state.current_fig = create_3d_plot(analyzer, word_input, similar_words)
-                    st.session_state.current_visualization = "similar_words"
-                else:
-                    st.error(f"Word '{word_input}' not found in vocabulary.")
-        else:
-            st.warning("Please enter a word to visualize.")
-
-    # Vector arithmetic section
-    st.sidebar.header("🧮 Vector Arithmetic")
-    st.sidebar.markdown("*Format: word3 - word1 + word2 = result*")
-    word1 = st.sidebar.text_input("Word 1 (subtract):", "man")
-    word2 = st.sidebar.text_input("Word 2 (add):", "woman")
-    word3 = st.sidebar.text_input("Word 3 (base):", "king")
-
-    if st.sidebar.button("🔢 Calculate Analogy"):
-        if word1 and word2 and word3:
-            with st.spinner("Calculating vector analogy..."):
-                result = analyzer.word_analogy(word1, word2, word3)
-                if not result.startswith("Word not found") and not result.startswith("Error"):
-                    st.sidebar.success(f"**{word3} - {word1} + {word2} = {result}**")
-                    # Create analogy visualization
-                    fig = create_analogy_visualization(analyzer, word1, word2, word3, result)
-                    if fig is not None:
-                        st.session_state.current_fig = fig
-                        st.session_state.current_visualization = "analogy"
-                else:
-                    st.sidebar.error(result)
-        else:
-            st.sidebar.warning("Please enter all three words for analogy calculation.")
-
-    # Display helping text
     st.info("👆 Use the sidebar controls to generate visualizations")
     st.markdown("""
     ### How to use:
@@ -71,9 +23,34 @@ def main():
     - walking - walk + run = running
     """)
 
-    # Display current visualization
-    if st.session_state.current_fig is not None:
-        st.plotly_chart(st.session_state.current_fig, use_container_width=True)
+    # Sidebar controls for similar words
+    st.sidebar.header("📊 Similar Words")
+    word_input = st.sidebar.text_input("Enter a word:", "pet")
+    num_similar = st.sidebar.slider("Number of similar words:", 5, 50, 20)
+
+    if st.sidebar.button("🔍 Visualize Similar Words"):
+        if word_input:
+            similar_words = analyzer.find_similar_words(word_input, num_similar)
+            if similar_words:
+                fig = create_3d_plot(analyzer, word_input, similar_words)
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+
+    # Vector arithmetic section
+    st.sidebar.header("🧮 Vector Arithmetic")
+    word1 = st.sidebar.text_input("Word 1 (subtract):", "man")
+    word2 = st.sidebar.text_input("Word 2 (add):", "woman")
+    word3 = st.sidebar.text_input("Word 3 (base):", "king")
+
+    if st.sidebar.button("🔢 Calculate Analogy"):
+        if word1 and word2 and word3:
+            result = analyzer.word_analogy(word1, word2, word3)
+            st.sidebar.success(f"Result: {result}")
+
+            fig = create_analogy_visualization(analyzer, word1, word2, word3, result)
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
+
 
 if __name__ == "__main__":
     main()
